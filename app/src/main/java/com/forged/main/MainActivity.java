@@ -1,7 +1,7 @@
-package files.forged.com.files;
+package com.forged.main;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,11 +9,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 
+import com.forged.data.CategoryTree;
+import com.forged.files.R;
+import com.forged.jobs.QueryMediaStoreJob;
+import com.forged.utils.QueryData;
 
 
 public class MainActivity extends Activity {
+
+    CategoryTree mainTree;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +54,8 @@ public class MainActivity extends Activity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    @SuppressLint("ValidFragment")
+    public class PlaceholderFragment extends Fragment {
 
         public PlaceholderFragment() {
         }
@@ -60,5 +66,32 @@ public class MainActivity extends Activity {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
         }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            QueryMediaStoreJob queryJob = new QueryMediaStoreJob(new TaskCallback() {
+
+                @Override
+                public void onTaskFinished(CategoryTree tree) {
+                    mainTree = tree;
+                    continueWork();
+                }
+            });
+            queryJob.execute(QueryData.QUERY_TYPE.AUDIO);
+        }
+    }
+
+    public void continueWork() {
+        for(int i = 0; i < mainTree.size(); i++) {
+            System.out.print("GOT NODE: " + i);
+        }
+
+        System.out.println("END");
+    }
+
+    public interface TaskCallback {
+
+        public abstract void onTaskFinished(final CategoryTree tree);
     }
 }
