@@ -1,9 +1,7 @@
 package com.forged.jobs;
 
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.provider.MediaStore;
 
 import com.forged.data.Category;
@@ -168,7 +166,26 @@ public class QueryMediaStoreJob extends AsyncTask<QueryData.QUERY_TYPE, Integer,
             if(c != null) {
                 Category category = Category.createNewCategory(queryType.name());
                 while(c.moveToNext()) {
-                    MetaFile f = MetaFile.createMetaFile(c.getString(3), c.getString(5), c.getString(4));
+                    MetaFile f;
+                    switch(queryType) {
+                        case ALL:
+                            f = MetaFile.createMetaFile();
+                            break;
+                        case AUDIO:
+                            f = MetaFile.createMetaFile(c.getString(3), c.getString(5), c.getString(4));
+                            break;
+                        case FILES:
+                            f = MetaFile.createMetaFile(c.getString(2), c.getString(3), c.getString(1));
+                            break;
+                        case IMAGES:
+                            f = MetaFile.createMetaFile(c.getString(1), c.getString(3), c.getString(2));
+                            break;
+                        case VIDEO:
+                            f = MetaFile.createMetaFile(c.getString(3), c.getString(5), c.getString(4));
+                            break;
+                        default:
+                            f = MetaFile.createMetaFile();
+                    }
                     category.addMetaFile(f);
                 }
                 categoryTree.addRootNode(category);
@@ -183,7 +200,7 @@ public class QueryMediaStoreJob extends AsyncTask<QueryData.QUERY_TYPE, Integer,
             case AUDIO:
                 return FilesApp.getReference().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, AUDIO_PROJECTION_STR, IS_MUSIC_SELECTION, null, null);
             case FILES:
-                return FilesApp.getReference().getContentResolver().query(Uri.fromFile(Environment.getExternalStorageDirectory()), FILES_PROJECTION_STR, null, null, null);
+                return FilesApp.getReference().getContentResolver().query(MediaStore.Files.getContentUri("external"), FILES_PROJECTION_STR, null, null, null);
             case IMAGES:
                 return FilesApp.getReference().getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGES_PROJECTION_STR, null, null, null);
             case VIDEO:

@@ -10,7 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.forged.data.Category;
 import com.forged.data.CategoryTree;
+import com.forged.exceptions.NodeNotFoundException;
 import com.forged.files.R;
 import com.forged.jobs.QueryMediaStoreJob;
 import com.forged.utils.QueryData;
@@ -78,16 +80,26 @@ public class MainActivity extends Activity {
                     continueWork();
                 }
             });
-            queryJob.execute(QueryData.QUERY_TYPE.AUDIO);
+            queryJob.execute(QueryData.QUERY_TYPE.AUDIO, QueryData.QUERY_TYPE.IMAGES);
         }
     }
 
     public void continueWork() {
+        int count = 0;
         for(int i = 0; i < mainTree.size(); i++) {
-            System.out.print("GOT NODE: " + i);
+            ++count;
         }
 
-        System.out.println("END");
+        if(mainTree.size() > 0) {
+            for(int i = 0; i < mainTree.size(); ++i) {
+                try {
+                    Category c = mainTree.getNextRootNode();
+
+                } catch (NodeNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public interface TaskCallback {
