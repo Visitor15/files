@@ -12,6 +12,8 @@ public class MetaFile {
     private String _name;
     private String _uri;
 
+    private long _index;
+
     private int _accessedCount;
 
     private MetaFile() { }
@@ -46,5 +48,9 @@ public class MetaFile {
 
     public Uri getUri() {
         return Uri.fromFile(new File(_uri));
+    }
+
+    public void setIndex(final long index) {
+        _index = index;
     }
 }

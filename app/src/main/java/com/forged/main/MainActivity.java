@@ -80,7 +80,7 @@ public class MainActivity extends Activity {
                     continueWork();
                 }
             });
-            queryJob.execute(QueryData.QUERY_TYPE.AUDIO, QueryData.QUERY_TYPE.IMAGES);
+            queryJob.execute(QueryData.QUERY_TYPE.FILES);
         }
     }
 

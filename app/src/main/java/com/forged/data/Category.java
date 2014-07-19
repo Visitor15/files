@@ -3,7 +3,7 @@ package com.forged.data;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Category extends Node<Category> {
+public class Category extends Node<Category> implements ICategory {
 
     private String _name;
 
@@ -15,7 +15,7 @@ public class Category extends Node<Category> {
 
     private volatile List<MetaFile> _files;
 
-    private Category() { }
+    public Category() { }
 
     public static Category createNewCategory(String name) {
         Category c = new Category();
@@ -32,5 +32,10 @@ public class Category extends Node<Category> {
         _files.add(f);
 
         return true;
+    }
+
+    @Override
+    public String getTitle() {
+        return _name;
     }
 }

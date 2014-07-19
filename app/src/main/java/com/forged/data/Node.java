@@ -100,4 +100,8 @@ public class Node<T> {
         }
         throw NodeNotFoundException.throwException();
     }
+
+    public T getData() {
+        return _data;
+    }
 }

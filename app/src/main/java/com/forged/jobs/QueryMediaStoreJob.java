@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 
 import com.forged.data.Category;
+import com.forged.data.CategoryNode;
+import com.forged.data.CategorySet;
 import com.forged.data.CategoryTree;
 import com.forged.data.MetaFile;
 import com.forged.main.FilesApp;
@@ -20,6 +22,8 @@ public class QueryMediaStoreJob extends AsyncTask<QueryData.QUERY_TYPE, Integer,
 
     //Some audio may be explicitly marked as not being music
     public static String IS_MUSIC_SELECTION = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+    public static String IS_NONMEDIA_SELECTION = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+            + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE;
 
     public static String[] AUDIO_PROJECTION_STR = {
             MediaStore.Audio.Media._ID,
@@ -165,6 +169,10 @@ public class QueryMediaStoreJob extends AsyncTask<QueryData.QUERY_TYPE, Integer,
 
             if(c != null) {
                 Category category = Category.createNewCategory(queryType.name());
+
+                CategoryNode node = CategoryNode.createNewNode();
+
+                CategorySet set = CategorySet.createCategorySet();
                 while(c.moveToNext()) {
                     MetaFile f;
                     switch(queryType) {
@@ -186,7 +194,14 @@ public class QueryMediaStoreJob extends AsyncTask<QueryData.QUERY_TYPE, Integer,
                         default:
                             f = MetaFile.createMetaFile();
                     }
+
+                    FilesApp.getReference().addMetaFile(f);
+
                     category.addMetaFile(f);
+
+                    node.addChild(f);
+
+                    FilesApp.getReference().addCategorySet(set);
                 }
                 categoryTree.addRootNode(category);
             }
